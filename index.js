@@ -35,6 +35,15 @@ var questions = [
   },
 ];
 
+// Confirmation questions
+var confirm = [
+  {
+    type: 'confirm',
+    name: 'confirm',
+    message: 'Does this look good?',
+  },
+];
+
 // The questions prompt
 function askQuestions() {
 
@@ -59,17 +68,26 @@ function askQuestions() {
     console.log('\n🐿  All done! Here is what I\'ve written down:\n');
     console.log(output);
 
-    // Things we'll need to generate the filename
-    var slug = slugify(title);
-    var filename = '_bookmarks/' + slug + '.md';
+    inquirer.prompt(confirm).then(answers => {
 
-    // Write the file
-    fs.writeFile(filename, output, function () {
-      console.log('\n🐿  Great! I have saved your bookmark to ' + filename);
+      // Things we'll need to generate the filename
+      var slug = slugify(title);
+      var filename = '_bookmarks/' + slug + '.md';
+
+      if (answers.confirm) {
+        // Save output into file
+        fs.writeFile(filename, output, function () {
+          console.log('\n🐿  Great! I have saved your bookmark to ' + filename);
+        });
+      } else {
+        // Ask the questions again
+        console.log('\n🐿  Oops, let\'s try again!\n');
+        askQuestions();
+      }
+
     });
 
   });
-
 }
 
 // Kick off the questions prompt
